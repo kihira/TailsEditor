@@ -1,0 +1,14 @@
+{
+  "name": "Tails-Editor",
+  "version": "0.0.1",
+  "description": "An online editor for the Minecraft mod Tails",
+  "repository": "https://github.com/kihira/TailsEditor",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^2.4.2"
+  },
+  "dependencies": {
+    "@types/three": "^0.84.19",
+    "three": "^0.86.0"
+  }
+}
