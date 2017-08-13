@@ -1,6 +1,5 @@
 import * as THREE from 'three';
-(window as any).THREE = THREE;
-import 'three/examples/js/controls/OrbitControls';
+import 'imports-loader?THREE=three!three-examples/controls/OrbitControls'; // todo probably need to look into why the config version of this isn't loading
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -9,8 +8,8 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-let playerObject: THREE.Object3D;
-let selectedObject: THREE.Object3D;
+let playerObject: THREE.Object3D = null;
+let selectedObject: THREE.Object3D = null;
 let selectedAxisHelper = new THREE.AxisHelper();
 
 /** Functions **/
@@ -136,6 +135,5 @@ function onWindowResize(event: UIEvent) {
 }
 
 /** Run code **/
-console.log("Hello!");
 init();
 render();

@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "module": "commonjs",
-    "target": "es5",
-    "sourceMap": true
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "preserveConstEnums": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "exclude": [
     "node_modules"
   ],
-  "compileOnSave": true
+  "compileOnSave": true,
+  "buildOnSave": false
 }
