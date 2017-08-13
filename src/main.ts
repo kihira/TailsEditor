@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import 'imports-loader?THREE=three!three-examples/controls/OrbitControls'; // todo probably need to look into why the config version of this isn't loading
+import 'imports-loader?THREE=three!three-examples/controls/OrbitControls';
+import {BufferAttribute, VertexColors} from "three"; // todo probably need to look into why the config version of this isn't loading
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -8,9 +9,10 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-let playerObject: THREE.Object3D = null;
-let selectedObject: THREE.Object3D = null;
+let playerObject: THREE.Object3D;
+let selectedObject: THREE.Object3D;
 let selectedAxisHelper = new THREE.AxisHelper();
+let grid: THREE.Object3D;
 
 /** Functions **/
 
@@ -27,36 +29,60 @@ function init() {
     window.addEventListener('keypress', onKeyPress, false);
     window.addEventListener('resize', onWindowResize, false);
 
-    controls.addEventListener('change', render);
+    let dimensions = 20;
+    let index: number;
+
+    // Create axis guides
+    createGuides();
+
+    function createGuides() {
+        let vertices = new BufferAttribute(new Float32Array([
+            0, 0, 0,    dimensions, 0, 0,
+            0, 0, 0,    -dimensions, 0, 0,
+            0, 0, 0,    0, dimensions, 0,
+            0, 0, 0,    0, 0, dimensions,
+            0, 0, 0,    0, 0, -dimensions
+        ]), 3);
+        let colors = new BufferAttribute(new Float32Array([
+            1, 0, 0,        1, 0, 0,
+            0.6, 0.6, 0.6,  0.6, 0.6, 0.6,
+            0, 1, 0,        0, 1, 0,
+            0, 0, 1,        0, 0, 1,
+            0.6, 0.6, 0.6,  0.6, 0.6, 0.6,
+        ]), 3);
+
+        let geometry = new THREE.BufferGeometry();
+        geometry.addAttribute('position', vertices);
+        geometry.addAttribute('color', colors);
+
+        scene.add(new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({
+            vertexColors: VertexColors,
+            linewidth: 0.5,
+        })));
+    }
 
     // Load default models
     // todo loadPlayerModel();
 
     // Create base grid
-    let dimensions = 20;
     let geometry = new THREE.BufferGeometry();
-    let vertices = new Float32Array((dimensions*2*2*3)*2);
-    let index = 0;
+    let vertices = new THREE.BufferAttribute(new Float32Array((dimensions*2*2*3)*2), 3);
+    index = 0;
     for (let x = -dimensions; x <= dimensions; x++) {
-        vertices[index] = x;
-        vertices[index+1] = 0;
-        vertices[index+2] = -dimensions;
-        vertices[index+3] = x;
-        vertices[index+4] = 0;
-        vertices[index+5] = dimensions;
-        index += 6;
+        if (x == 0) continue;
+        vertices.setXYZ(index, x, 0, -dimensions);
+        vertices.setXYZ(index+1, x, 0, dimensions);
+        index+=2;
     }
     for (let z = -dimensions; z <= dimensions; z++) {
-        vertices[index] = -dimensions;
-        vertices[index+1] = 0;
-        vertices[index+2] = z;
-        vertices[index+3] = dimensions;
-        vertices[index+4] = 0;
-        vertices[index+5] = z;
-        index += 6;
+        if (z == 0) continue;
+        vertices.setXYZ(index, -dimensions, 0, z);
+        vertices.setXYZ(index+1, dimensions, 0, z);
+        index+=2;
+
     }
-    geometry.addAttribute( 'position', new THREE.BufferAttribute(vertices, 3));
-    let grid = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({
+    geometry.addAttribute( 'position', vertices);
+    grid = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({
         color: 0xAAAAAA,
         linewidth: 0.5,
     }));
