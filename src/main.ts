@@ -34,27 +34,37 @@ function init() {
     // todo loadPlayerModel();
 
     // Create base grid
+    let dimensions = 20;
     let geometry = new THREE.BufferGeometry();
-    let vertices = new Float32Array(20 * 2 * 3);
+    let vertices = new Float32Array((dimensions*2*2*3)*2);
     let index = 0;
-    for (let x = -10; x <= 10; x++) {
+    for (let x = -dimensions; x <= dimensions; x++) {
         vertices[index] = x;
-        vertices[index+1] = -10;
-        vertices[index+2] = 0;
+        vertices[index+1] = 0;
+        vertices[index+2] = -dimensions;
         vertices[index+3] = x;
-        vertices[index+4] = 10;
-        vertices[index+5] = 0;
+        vertices[index+4] = 0;
+        vertices[index+5] = dimensions;
         index += 6;
     }
+    for (let z = -dimensions; z <= dimensions; z++) {
+        vertices[index] = -dimensions;
+        vertices[index+1] = 0;
+        vertices[index+2] = z;
+        vertices[index+3] = dimensions;
+        vertices[index+4] = 0;
+        vertices[index+5] = z;
+        index += 6;
+    }
+    geometry.addAttribute( 'position', new THREE.BufferAttribute(vertices, 3));
     let grid = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({
         color: 0xAAAAAA,
         linewidth: 0.5,
-
     }));
     scene.add(grid);
 
     // Set up camera
-    camera.position.set(5, 5, 5);
+    camera.position.set(25, 25, 25);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     camera.updateProjectionMatrix();
 }
@@ -126,5 +136,6 @@ function onWindowResize(event: UIEvent) {
 }
 
 /** Run code **/
+console.log("Hello!");
 init();
 render();
