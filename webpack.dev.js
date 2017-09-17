@@ -8,8 +8,20 @@ const HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     inject: 'body'
 });
 
+const Dashboard = require('webpack-dashboard');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+
 /* Export configuration */
 module.exports = {
+    devtool: 'inline-source-map', // Needed for webpack-dev-server to not break sourcemaps on reload
+    devServer: {
+        compress: true,
+        inline: true,
+        open: true,
+        historyApiFallback: true,
+        hot: true,
+        quiet: true
+    },
     entry: [
         './src/main.ts'
     ],
@@ -35,5 +47,5 @@ module.exports = {
             }
         ]
     },
-    plugins: [HTMLWebpackPluginConfig]
+    plugins: [HTMLWebpackPluginConfig, new DashboardPlugin({handler: new Dashboard().setData})]
 };
